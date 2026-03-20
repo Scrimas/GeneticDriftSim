@@ -1,0 +1,18 @@
+import tkinter as tk
+from gui import DriftGUI
+import ctypes
+import os
+
+def main():
+    if os.name == 'nt':
+        try:
+            ctypes.windll.shcore.SetProcessDpiAwareness(1)
+        except Exception:
+            ctypes.windll.user32.SetProcessDPIAware()
+
+    root = tk.Tk()
+    app = DriftGUI(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()

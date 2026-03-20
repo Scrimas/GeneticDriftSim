@@ -30,6 +30,10 @@ class DriftGUI:
         
         self.num_gens_to_run = tk.IntVar(value=50)
         self.gen_count_var = tk.StringVar(value="Gen: 0")
+        self.stop_on_fixation_var = tk.BooleanVar(value=True)
+
+        self.mutation_rate_var.trace_add("write", self.update_sim_mutation_rate)
+        self.mutation_enabled_var.trace_add("write", self.update_sim_mutation_rate)
 
         self.setup_ui()
         self.reset_sim()
@@ -77,6 +81,9 @@ class DriftGUI:
         
         ttk.Scale(control_frame, from_=1, to=1000, variable=self.speed_var).pack(fill='x', pady=5)
 
+        ttk.Separator(control_frame, orient='horizontal').pack(fill='x', pady=10)
+        ttk.Checkbutton(control_frame, text="Stop on Fixation", variable=self.stop_on_fixation_var).pack(pady=5)
+
         ttk.Button(control_frame, text="Start/Pause", command=self.toggle_run).pack(pady=5, fill=tk.X)
         ttk.Button(control_frame, text="Step", command=self.step_sim).pack(pady=5, fill=tk.X)
         
@@ -93,8 +100,12 @@ class DriftGUI:
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
         self.colors = plt.get_cmap('tab20').colors
-        self.cmap = mcolors.ListedColormap(self.colors)
-        self.norm = mcolors.BoundaryNorm(np.arange(-0.5, 20.5, 1), len(self.colors))
+        self.grid_colors = ['#eeeeee'] + list(self.colors)
+        self.cmap = mcolors.ListedColormap(self.grid_colors)
+        self.norm = mcolors.BoundaryNorm(np.arange(-1.5, 20.5, 1), len(self.grid_colors))
+
+        self.img_grid = None
+        self.lines_graph = {}
 
     def on_mutation_toggle(self):
         if self.mutation_enabled_var.get():
@@ -125,16 +136,28 @@ class DriftGUI:
         mutation_rate = self.mutation_rate_var.get() if self.mutation_enabled_var.get() else 0.0
         
         self.sim = GeneticDriftSimulator(pop_size, num_species, mutation_rate)
+        
+        self.ax_grid.clear()
+        self.ax_graph.clear()
+        self.img_grid = None
+        self.lines_graph = {}
+        
         self.update_gen_label()
         self.refresh_plots()
 
     def update_gen_label(self):
         self.gen_count_var.set(f"Gen: {self.sim.generation}")
 
-    def refresh_plots(self):
-        self.sim.mutation_rate = self.mutation_rate_var.get() if self.mutation_enabled_var.get() else 0.0
+    def update_sim_mutation_rate(self, *args):
+        """Updates the simulator's mutation rate based on UI values."""
+        if self.sim:
+            try:
+                rate = self.mutation_rate_var.get() if self.mutation_enabled_var.get() else 0.0
+                self.sim.mutation_rate = rate
+            except tk.TclError:
+                pass
 
-        self.ax_grid.clear()
+    def refresh_plots(self):
         side = int(np.sqrt(self.sim.population_size))
         if side * side < self.sim.population_size:
             side += 1
@@ -143,24 +166,36 @@ class DriftGUI:
         grid_data[:self.sim.population_size] = self.sim.population
         grid_data = grid_data.reshape((side, side))
         
-        self.ax_grid.imshow(grid_data, cmap=self.cmap, norm=self.norm, interpolation='nearest')
-        self.ax_grid.set_title("Population Grid (All 20 Possible Species)")
-        self.ax_grid.axis('off')
+        if self.img_grid is None:
+            self.img_grid = self.ax_grid.imshow(grid_data, cmap=self.cmap, norm=self.norm, interpolation='nearest')
+            self.ax_grid.set_title("Population Grid (All 20 Possible Species)")
+            self.ax_grid.axis('off')
+        else:
+            self.img_grid.set_data(grid_data)
 
-        self.ax_graph.clear()
         history = self.sim.get_history_array()
         gens = np.arange(history.shape[0])
         
         for s in range(20):
-            if np.any(history[:, s] > 0):
-                self.ax_graph.plot(gens, history[:, s], color=self.colors[s], label=f"Sp {s}")
+            counts = history[:, s]
+            if np.any(counts > 0) or s in self.lines_graph:
+                if s not in self.lines_graph:
+                    line, = self.ax_graph.plot(gens, counts, color=self.colors[s], label=f"Sp {s}")
+                    self.lines_graph[s] = line
+                else:
+                    self.lines_graph[s].set_data(gens, counts)
+
+        self.ax_graph.set_xlim(0, max(1, self.sim.generation))
+        self.ax_graph.set_ylim(-self.sim.population_size * 0.02, self.sim.population_size * 1.02)
         
         self.ax_graph.set_title("Species Counts Over Time")
         self.ax_graph.set_xlabel("Generations")
         self.ax_graph.set_ylabel("Individuals")
         
-        self.fig.tight_layout()
-        self.canvas.draw()
+        if self.sim.generation == 0:
+            self.fig.tight_layout()
+            
+        self.canvas.draw_idle()
 
     def toggle_run(self):
         self.is_running = not self.is_running
@@ -173,17 +208,37 @@ class DriftGUI:
         self.refresh_plots()
 
     def run_n_gens(self):
-        n = self.num_gens_to_run.get()
+        try:
+            n = self.num_gens_to_run.get()
+        except tk.TclError:
+            return
+            
         for _ in range(n):
             self.sim.step()
+            if self.check_fixation():
+                break
         self.update_gen_label()
         self.refresh_plots()
+
+    def check_fixation(self):
+        """Checks if any species has reached the total population size and pauses."""
+        if not self.stop_on_fixation_var.get():
+            return False
+        counts = self.sim.get_counts()
+        if np.any(counts == self.sim.population_size):
+            self.is_running = False
+            return True
+        return False
 
     def run_loop(self):
         if self.is_running:
             self.sim.step()
             self.update_gen_label()
             self.refresh_plots()
+            
+            if self.check_fixation():
+                return
+                
             self.after_id = self.root.after(self.speed_var.get(), self.run_loop)
 
     def on_close(self):

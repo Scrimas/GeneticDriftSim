@@ -27,12 +27,12 @@ class GeneticDriftSimulator:
 
     def get_counts(self):
         """Returns the count of each possible species in the current population."""
-        counts = np.zeros(self.MAX_SPECIES, dtype=int)
-        unique, counts_found = np.unique(self.population, return_counts=True)
-        for u, c in zip(unique, counts_found):
-            if u < self.MAX_SPECIES:
-                counts[u] = c
-        return counts
+        if self.population_size == 0:
+            return np.zeros(self.MAX_SPECIES, dtype=int)
+            
+        counts = np.bincount(self.population, minlength=self.MAX_SPECIES)
+        
+        return counts[:self.MAX_SPECIES].astype(int)
 
     def step(self):
         """Advances the simulation by one generation (Wright-Fisher model)."""

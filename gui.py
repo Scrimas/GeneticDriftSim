@@ -168,7 +168,7 @@ class DriftGUI:
         
         if self.img_grid is None:
             self.img_grid = self.ax_grid.imshow(grid_data, cmap=self.cmap, norm=self.norm, interpolation='nearest')
-            self.ax_grid.set_title("Population Grid (All 20 Possible Species)")
+            self.ax_grid.set_title("Population Grid")
             self.ax_grid.axis('off')
         else:
             self.img_grid.set_data(grid_data)

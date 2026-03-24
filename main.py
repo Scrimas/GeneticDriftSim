@@ -11,7 +11,7 @@ def main():
             ctypes.windll.user32.SetProcessDPIAware()
 
     root = tk.Tk()
-    app = DriftGUI(root)
+    DriftGUI(root)
     root.mainloop()
 
 if __name__ == "__main__":

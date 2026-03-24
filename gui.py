@@ -249,8 +249,3 @@ class DriftGUI:
         plt.close(self.fig)
         self.root.destroy()
         self.root.quit()
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    gui = DriftGUI(root)
-    root.mainloop()

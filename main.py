@@ -3,7 +3,7 @@ from gui import DriftGUI
 import ctypes
 import os
 
-def main():
+def main() -> None:
     if os.name == 'nt':
         try:
             ctypes.windll.shcore.SetProcessDpiAwareness(1)

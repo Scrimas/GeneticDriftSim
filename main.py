@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as ctk
 from gui import DriftGUI
 import ctypes
 import os
@@ -10,7 +10,10 @@ def main() -> None:
         except Exception:
             ctypes.windll.user32.SetProcessDPIAware()
 
-    root = tk.Tk()
+    ctk.set_appearance_mode("System")
+    ctk.set_default_color_theme("blue")
+
+    root = ctk.CTk()
     DriftGUI(root)
     root.mainloop()
 

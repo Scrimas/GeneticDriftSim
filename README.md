@@ -28,7 +28,7 @@ The directory structure is organized to separate the mathematical model from the
 
 ```text
 GeneticDriftSim/
-├── gui.py              # Tkinter-based UI and Matplotlib rendering
+├── gui.py              # CustomTkinter-based UI and Matplotlib rendering
 ├── main.py             # Main entry point and system configuration
 └── simulator.py        # Wright-Fisher model logic and NumPy backend
 ```

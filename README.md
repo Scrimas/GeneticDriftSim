@@ -14,6 +14,15 @@
 
 As a tool designed for educational visualization, this simulator prioritizes clarity and real-time interaction. By using **NumPy** for vectorized sampling and **Matplotlib** for dynamic plotting, it demonstrates how stochastic processes can lead to the fixation or loss of alleles in a population without the need for complex agent-based modeling. Every algorithmic choice was made to ensure the simulation remains responsive even at larger population sizes.
 
+## Requirements & Compatibility
+
+- **Python:** Python 3.8+
+- **Libraries:** `numpy`, `matplotlib`, `customtkinter`
+- **Operating Systems:** 
+    - **Windows 11:** Tested
+    - **Linux:** Tested, with some UI issues but works fine
+    - **macOS:** Untested but should work fine as the script uses standard cross-platform libraries
+
 ## Core Features
 
 - **Real-time Population Grid:** A visual representation of the population where each colored square represents an individual of a specific species.
@@ -44,7 +53,7 @@ git clone https://github.com/Scrimas/GeneticDriftSim
 2. **Install Dependencies:** Ensure you have the required libraries installed:
 
 ```bash
-pip install numpy matplotlib
+pip install numpy matplotlib customtkinter
 ```
 
 3. **Run Simulator:** Execute the main script from the root directory:

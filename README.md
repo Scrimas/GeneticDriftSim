@@ -46,11 +46,8 @@ GeneticDriftSim/
 
 ```bash
 git clone https://github.com/Scrimas/GeneticDriftSim
-pip install numpy matplotlib customtkinter
-```
-
-```bash
 cd GeneticDriftSim
+pip install -r requirements.txt
 python main.py
 ```
 

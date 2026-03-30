@@ -25,10 +25,10 @@ class DriftGUI:
         self.after_id: str | None = None
         
         self.pop_size_var: tk.StringVar = tk.StringVar(value="400")
-        self.num_species_var: tk.StringVar = tk.StringVar(value="10")
+        self.num_alleles_var: tk.StringVar = tk.StringVar(value="10")
         
         self.pop_size_var.trace_add("write", self.on_param_change)
-        self.num_species_var.trace_add("write", self.on_param_change)
+        self.num_alleles_var.trace_add("write", self.on_param_change)
 
         self.mutation_enabled_var: tk.BooleanVar = tk.BooleanVar(value=False)
         self.mutation_rate_var: tk.StringVar = tk.StringVar(value="0.01")
@@ -78,8 +78,8 @@ class DriftGUI:
         ctk.CTkLabel(pop_card, text="Population Size", font=self.font_header, text_color=self.text_main).pack(pady=(15, 0), padx=15, anchor="w")
         ctk.CTkEntry(pop_card, textvariable=self.pop_size_var, border_width=1, border_color=self.border_color, text_color=self.text_main, corner_radius=6).pack(pady=(5, 10), padx=15, fill=tk.X)
 
-        ctk.CTkLabel(pop_card, text="Initial Species (Max 20)", font=self.font_label, text_color=self.text_sub).pack(pady=(5, 0), padx=15, anchor="w")
-        ctk.CTkEntry(pop_card, textvariable=self.num_species_var, border_width=1, border_color=self.border_color, text_color=self.text_main, corner_radius=6).pack(pady=(5, 15), padx=15, fill=tk.X)
+        ctk.CTkLabel(pop_card, text="Initial Alleles (Max 20)", font=self.font_label, text_color=self.text_sub).pack(pady=(5, 0), padx=15, anchor="w")
+        ctk.CTkEntry(pop_card, textvariable=self.num_alleles_var, border_width=1, border_color=self.border_color, text_color=self.text_main, corner_radius=6).pack(pady=(5, 15), padx=15, fill=tk.X)
 
         # --- 2nd Card: Mutation Settings ---
         mut_card = ctk.CTkFrame(control_sidebar, corner_radius=8, fg_color=self.card_bg)
@@ -157,7 +157,7 @@ class DriftGUI:
         if self.sim and self.sim.generation == 0 and not self.is_running:
             try:
                 p = int(self.pop_size_var.get())
-                s = int(self.num_species_var.get())
+                s = int(self.num_alleles_var.get())
                 if p > 0 and s > 0:
                     self.reset_sim()
             except ValueError:
@@ -171,12 +171,12 @@ class DriftGUI:
         
         try:
             pop_size = int(self.pop_size_var.get())
-            num_species = min(int(self.num_species_var.get()), 20)
+            num_alleles = min(int(self.num_alleles_var.get()), 20)
             mutation_rate = float(self.mutation_rate_var.get()) if self.mutation_enabled_var.get() else 0.0
         except ValueError:
             return 
             
-        self.sim = GeneticDriftSimulator(pop_size, num_species, mutation_rate)
+        self.sim = GeneticDriftSimulator(pop_size, num_alleles, mutation_rate)
         
         self.ax_grid.clear()
         self.ax_graph.clear()
@@ -240,7 +240,7 @@ class DriftGUI:
         self.ax_graph.set_xlim(0, max(1, self.sim.generation))
         self.ax_graph.set_ylim(-self.sim.population_size * 0.02, self.sim.population_size * 1.05)
         
-        self.ax_graph.set_title("Species Counts Over Time", fontdict={'fontsize': 14, 'fontweight': 'bold', 'color': self.mpl_text_main}, pad=15)
+        self.ax_graph.set_title("Alleles Distribution Over Time", fontdict={'fontsize': 14, 'fontweight': 'bold', 'color': self.mpl_text_main}, pad=15)
         self.ax_graph.set_xlabel("Generations", color=self.mpl_text_sub, fontweight='bold')
         self.ax_graph.set_ylabel("Individuals", color=self.mpl_text_sub, fontweight='bold')
         self.ax_graph.tick_params(colors=self.mpl_text_sub)

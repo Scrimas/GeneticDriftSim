@@ -4,7 +4,7 @@
 
 ## Overview
 
-**Genetic Drift Simulator** is a Python-based simulation of genetic drift based on the Wright-Fisher model. This tool allows users to visualize how allele frequencies (represented as "species") change over time due to random sampling in a finite population.
+**Genetic Drift Simulator** is a Python-based simulation of genetic drift based on the Wright-Fisher model. This tool allows users to visualize how allele frequencies change over time due to random sampling in a finite population.
 
 ## Project Status
 
@@ -25,11 +25,11 @@ As a tool designed for educational visualization, this simulator prioritizes cla
 
 ## Core Features
 
-- **Real-time Population Grid:** A visual representation of the population where each colored square represents an individual of a specific species.
-- **Dynamic Frequency Graphing:** Line graph showing the population count of each species over generations, updated in real-time.
+- **Real-time Population Grid:** A visual representation of the population where each colored square represents an individual of a specific allele.
+- **Dynamic Frequency Graphing:** Line graph showing the population count of each allele over generations, updated in real-time.
 - **Interactive Control Suite:** Start, pause, step, or run a specific number of generations to observe drift at your own pace.
 - **Stochastic Mutation Engine:** Toggleable mutation rates to observe how new genetic variation interacts with random drift.
-- **Automated Fixation Detection:** Option to automatically pause the simulation once a single species has achieved fixation.
+- **Automated Fixation Detection:** Option to automatically pause the simulation once a single allele has achieved fixation.
 
 ## Architecture
 

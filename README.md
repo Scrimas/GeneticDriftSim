@@ -44,25 +44,15 @@ GeneticDriftSim/
 
 ## Usage
 
-1. **Clone repository**
-
 ```bash
 git clone https://github.com/Scrimas/GeneticDriftSim
-```
-
-2. **Install Dependencies:** Ensure you have the required libraries installed:
-
-```bash
 pip install numpy matplotlib customtkinter
 ```
 
-3. **Run Simulator:** Execute the main script from the root directory:
-
 ```bash
+cd GeneticDriftSim
 python main.py
 ```
-
-4. **Interact:** Adjust parameters in the left panel and use the control buttons to start the simulation.
 
 ## License
 

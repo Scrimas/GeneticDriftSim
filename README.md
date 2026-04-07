@@ -18,10 +18,10 @@ As a tool designed for educational visualization, this simulator prioritizes cla
 
 - **Python:** Python 3.8+
 - **Libraries:** `numpy`, `matplotlib`, `customtkinter`
-- **Operating Systems:** 
-    - **Windows 11:** Tested
-    - **Linux:** Tested, with some UI issues but works fine
-    - **macOS:** Untested but should work fine as the script uses standard cross-platform libraries
+- **Operating Systems:**
+  - **Windows 11:** Tested
+  - **Linux:** Tested, with some UI issues but works fine
+  - **macOS:** Untested but should work fine as the script uses standard cross-platform libraries
 
 ## Core Features
 
